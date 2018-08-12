@@ -172,7 +172,6 @@ contract ParadiseAlpha is Ownable, Pausable {
     
     /**
      * @dev modifier ensuring that the modified method is only called by the reserver in the booking
-     * @param bookingId - the identifier of the reservation
      */
     modifier onlyReserver(bytes32 bookingId) {
         require(bookingId != 0);
@@ -183,7 +182,6 @@ contract ParadiseAlpha is Ownable, Pausable {
 
     /**
      * @dev modifier ensuring that the modified method is only called on active reservations
-     * @param bookingId - the identifier of the reservation
      */
     modifier onlyActive(bytes32 bookingId) {
         require(bookingId != 0);
@@ -194,7 +192,6 @@ contract ParadiseAlpha is Ownable, Pausable {
 
     /**
      * @dev modifier ensuring that the modified method is only executed before the refund deadline
-     * @param bookingId - the identifier of the reservation
      */
     modifier onlyBeforeDeadline(bytes32 bookingId) {
         require(bookingId != 0);
@@ -205,7 +202,6 @@ contract ParadiseAlpha is Ownable, Pausable {
 
      /**
      * @dev modifier ensuring that the modified method is only executed after the refund deadline
-     * @param bookingId - the identifier of the reservation
      */
     modifier onlyAfterDeadline(bytes32 bookingId) {
         require(bookingId != 0);
@@ -220,9 +216,6 @@ contract ParadiseAlpha is Ownable, Pausable {
 
     /**
      * @dev function to ensure complete unlinking of booking from the mapping and array
-     * @notice it marks the unlinked element as inactive
-     * @notice it swaps the last element with the unlinked one and marks it in the mapping
-     * @param bookingId - the identifier of the reservation
      */
     function unlinkBooking(bytes32 bookingId) private {
         bytes32 lastId = bookingIds[bookingIds.length-1];
@@ -235,10 +228,6 @@ contract ParadiseAlpha is Ownable, Pausable {
     /**
      * @dev called by the owner of the contract to make a reservation and withdraw PDT
      * @notice the reservator has to approve enough allowance before calling this
-     * @param bookingId - the identifier of the reservation
-     * @param reservationCostPDT - the cost of the reservation
-     * @param refundDeadline - the last date the user can ask for refund
-     * @param refundAmountPDT - how many tokens the refund is
      */
     function reserve
         (bytes32 bookingId, uint reservationCostPDT, uint refundDeadline, uint refundAmountPDT, uint securityDepositPDT) 
@@ -268,7 +257,6 @@ contract ParadiseAlpha is Ownable, Pausable {
     
     /**
      * @dev called by the reserver to cancel his/her booking
-     * @param bookingId - the identifier of the reservation
      */
     function cancelBooking(bytes32 bookingId) 
         whenNotPaused onlyReserver(bookingId) onlyActive(bookingId) onlyBeforeDeadline(bookingId) public returns(bool) 
@@ -287,7 +275,6 @@ contract ParadiseAlpha is Ownable, Pausable {
     
     /**
      * @dev called by owner to make PDT withdrawal for this reservation
-     * @param bookingId - the identifier of the reservation
      */
     function withdraw(bytes32 bookingId) 
         whenNotPaused onlyOwner onlyActive(bookingId) onlyAfterDeadline(bookingId) public returns(bool) 
